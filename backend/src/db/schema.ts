@@ -4,9 +4,14 @@ import { user } from "./auth-schema";
 export * from "./auth-schema";
 
 export const areaOfInterest = sqliteTable("area_of_interest", {
-  id: int().primaryKey({ autoIncrement: true }),
-  staffId: int().notNull().references(() => user.id, { onDelete: "cascade" }),
-  label: text("label").notNull(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  staffId: text("staff_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  label: text("label")
+    .notNull(),
   createdAt: int("created_at", { mode: "timestamp_ms" })
     .notNull()
     .$defaultFn(() => new Date()),

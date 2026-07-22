@@ -7,7 +7,7 @@ export type Role = "staff" | "student";
 export const sessionContext = new Elysia().derive(
   { as: "scoped" },
   async ({ request }: { request: Request }) => {
-    const result = await auth.api.getSession(request);
+    const result = await auth.api.getSession({ headers: request.headers });
     return { session: result };
   }
 );

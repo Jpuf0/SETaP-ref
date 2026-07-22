@@ -1,13 +1,13 @@
 import { Database } from "bun:sqlite";
 import { drizzle } from "drizzle-orm/bun-sqlite";
-import * as schema from "./schema"
+import { relations } from "./relations";
+import * as schema from "./schema";
 
-export function createDb<TSchema extends Record<string, unknown>>(
+export function createDb(
   sqlitePath: string,
-  dbSchema: TSchema,
 ) {
   const sqlite = new Database(sqlitePath);
-  return drizzle({ client: sqlite })
+  return drizzle({ client: sqlite, relations: { ...relations, ...schema.authRelations } })
 }
 
-export const db = createDb(process.env.DB_FILE_NAME!, schema)
+export const db = createDb(process.env.DB_FILE_NAME!)

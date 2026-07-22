@@ -2,6 +2,7 @@ import cors from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { auth } from "./auth";
 import { ForbiddenError, NotFoundError, ValidationError } from "./lib/errors";
+import { interestsRoutes } from "./routes/interests";
 
 const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:5173";
 const PORT = process.env.PORT ?? 3000;
@@ -21,10 +22,12 @@ const app = new Elysia()
       set.status = error.status;
       return { error: error.message };
     }
+    console.log(error)
     set.status = 500;
     return { error: "Internal Server Error" };
   })
   .get("/", () => "OK")
+  .use(interestsRoutes)
   .listen(PORT);
 
 export type App = typeof app;
