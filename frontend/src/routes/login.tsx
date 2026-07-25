@@ -24,7 +24,7 @@ export const Route = createFileRoute("/login")({
 
 const loginSchema = z.object({
   email: z.email(),
-  password: z.string(),
+  password: z.string().nonempty("Please enter your password"),
 });
 
 function LoginPage() {
@@ -39,7 +39,7 @@ function LoginPage() {
       onSubmit: loginSchema,
     },
     onSubmit: async ({ value }) => {
-      const { error } = await authClient.signIn({
+      const { error } = await authClient.signIn.email({
         email: value.email,
         password: value.password,
       });
@@ -105,6 +105,7 @@ function LoginPage() {
                       </FieldLabel>
                       <Input
                         id="login-form-password"
+                        type="password"
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}

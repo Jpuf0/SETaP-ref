@@ -12,7 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ProfileInterestsRouteImport } from './routes/profile/interests'
+import { Route as ProfileProjectIdeasRouteImport } from './routes/profile/project-ideas'
+import { Route as ProjectIdeasIdeaIdRouteImport } from './routes/project-ideas/$ideaId'
 import { Route as StaffIndexRouteImport } from './routes/staff/index'
+import { Route as StaffStaffIdRouteImport } from './routes/staff/$staffId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,9 +33,29 @@ const RegisterRoute = RegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileInterestsRoute = ProfileInterestsRouteImport.update({
+  id: '/profile/interests',
+  path: '/profile/interests',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileProjectIdeasRoute = ProfileProjectIdeasRouteImport.update({
+  id: '/profile/project-ideas',
+  path: '/profile/project-ideas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectIdeasIdeaIdRoute = ProjectIdeasIdeaIdRouteImport.update({
+  id: '/project-ideas/$ideaId',
+  path: '/project-ideas/$ideaId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StaffIndexRoute = StaffIndexRouteImport.update({
   id: '/staff/',
   path: '/staff/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffStaffIdRoute = StaffStaffIdRouteImport.update({
+  id: '/staff/$staffId',
+  path: '/staff/$staffId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -39,12 +63,20 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/profile/interests': typeof ProfileInterestsRoute
+  '/profile/project-ideas': typeof ProfileProjectIdeasRoute
+  '/project-ideas/$ideaId': typeof ProjectIdeasIdeaIdRoute
+  '/staff/$staffId': typeof StaffStaffIdRoute
   '/staff/': typeof StaffIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/profile/interests': typeof ProfileInterestsRoute
+  '/profile/project-ideas': typeof ProfileProjectIdeasRoute
+  '/project-ideas/$ideaId': typeof ProjectIdeasIdeaIdRoute
+  '/staff/$staffId': typeof StaffStaffIdRoute
   '/staff': typeof StaffIndexRoute
 }
 export interface FileRoutesById {
@@ -52,20 +84,53 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/profile/interests': typeof ProfileInterestsRoute
+  '/profile/project-ideas': typeof ProfileProjectIdeasRoute
+  '/project-ideas/$ideaId': typeof ProjectIdeasIdeaIdRoute
+  '/staff/$staffId': typeof StaffStaffIdRoute
   '/staff/': typeof StaffIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/staff/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/profile/interests'
+    | '/profile/project-ideas'
+    | '/project-ideas/$ideaId'
+    | '/staff/$staffId'
+    | '/staff/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/staff'
-  id: '__root__' | '/' | '/login' | '/register' | '/staff/'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/profile/interests'
+    | '/profile/project-ideas'
+    | '/project-ideas/$ideaId'
+    | '/staff/$staffId'
+    | '/staff'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/register'
+    | '/profile/interests'
+    | '/profile/project-ideas'
+    | '/project-ideas/$ideaId'
+    | '/staff/$staffId'
+    | '/staff/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
+  ProfileInterestsRoute: typeof ProfileInterestsRoute
+  ProfileProjectIdeasRoute: typeof ProfileProjectIdeasRoute
+  ProjectIdeasIdeaIdRoute: typeof ProjectIdeasIdeaIdRoute
+  StaffStaffIdRoute: typeof StaffStaffIdRoute
   StaffIndexRoute: typeof StaffIndexRoute
 }
 
@@ -92,11 +157,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile/interests': {
+      id: '/profile/interests'
+      path: '/profile/interests'
+      fullPath: '/profile/interests'
+      preLoaderRoute: typeof ProfileInterestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile/project-ideas': {
+      id: '/profile/project-ideas'
+      path: '/profile/project-ideas'
+      fullPath: '/profile/project-ideas'
+      preLoaderRoute: typeof ProfileProjectIdeasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/project-ideas/$ideaId': {
+      id: '/project-ideas/$ideaId'
+      path: '/project-ideas/$ideaId'
+      fullPath: '/project-ideas/$ideaId'
+      preLoaderRoute: typeof ProjectIdeasIdeaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/staff/': {
       id: '/staff/'
       path: '/staff'
       fullPath: '/staff/'
       preLoaderRoute: typeof StaffIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff/$staffId': {
+      id: '/staff/$staffId'
+      path: '/staff/$staffId'
+      fullPath: '/staff/$staffId'
+      preLoaderRoute: typeof StaffStaffIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -106,6 +199,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
+  ProfileInterestsRoute: ProfileInterestsRoute,
+  ProfileProjectIdeasRoute: ProfileProjectIdeasRoute,
+  ProjectIdeasIdeaIdRoute: ProjectIdeasIdeaIdRoute,
+  StaffStaffIdRoute: StaffStaffIdRoute,
   StaffIndexRoute: StaffIndexRoute,
 }
 export const routeTree = rootRouteImport
