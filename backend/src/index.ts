@@ -1,17 +1,22 @@
-import cors from "@elysiajs/cors";
+import { auth } from "@/auth";
+import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
+import { expressionsOfInterestRoutes } from "@/routes/expressionsOfInterest";
+import { interestsRoutes } from "@/routes/interests";
+import { projectIdeasRoutes } from "@/routes/projectIdeas";
+import { staffRoutes } from "@/routes/staff";
+import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
-import { auth } from "./auth";
-import { ForbiddenError, NotFoundError, ValidationError } from "./lib/errors";
-import { interestsRoutes } from "./routes/interests";
 
 const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:5173";
 const PORT = process.env.PORT ?? 3000;
 
 const app = new Elysia()
-  .use(cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  }))
+  .use(
+    cors({
+      origin: FRONTEND_URL,
+      credentials: true,
+    }),
+  )
   .all("/api/auth/*", ({ request }) => auth.handler(request))
   .onError(({ error, set }) => {
     if (
@@ -22,12 +27,14 @@ const app = new Elysia()
       set.status = error.status;
       return { error: error.message };
     }
-    console.log(error)
     set.status = 500;
     return { error: "Internal Server Error" };
   })
   .get("/", () => "OK")
   .use(interestsRoutes)
+  .use(projectIdeasRoutes)
+  .use(staffRoutes)
+  .use(expressionsOfInterestRoutes)
   .listen(PORT);
 
 export type App = typeof app;

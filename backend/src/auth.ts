@@ -1,8 +1,8 @@
 //@ts-expect-error relations-v2 does exist.
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { betterAuth } from "better-auth";
-import { db } from "./db";
-import * as schema from "./db/schema";
+import { db } from "@/db";
+import * as schema from "@/db/schema";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:3000";
 const FRONTEND_URL = process.env.FRONTEND_URL ?? "http://localhost:5173";
