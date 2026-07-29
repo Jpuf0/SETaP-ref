@@ -74,6 +74,14 @@ describe("projectIdeas.service", () => {
       ).rejects.toThrow(ValidationError);
     });
 
+    it("succeeds with a title at exactly the 150-character upper boundary", async () => {
+      const idea = await service.create("staff-1", {
+        title: "a".repeat(150),
+        description: "Desc A",
+      });
+      expect(idea.title).toHaveLength(150);
+    });
+
     it("rejects an empty description", async () => {
       await expect(
         service.create("staff-1", { title: "Idea A", description: " " }),
@@ -84,6 +92,14 @@ describe("projectIdeas.service", () => {
       await expect(
         service.create("staff-1", { title: "Idea A", description: "a".repeat(2001) }),
       ).rejects.toThrow(ValidationError);
+    });
+
+    it("succeeds with a description at exactly the 2000-character upper boundary", async () => {
+      const idea = await service.create("staff-1", {
+        title: "Idea A",
+        description: "a".repeat(2000),
+      });
+      expect(idea.description).toHaveLength(2000);
     });
 
     it("rejects interestIds not owned by the staff member", async () => {

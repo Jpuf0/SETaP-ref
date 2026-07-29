@@ -52,6 +52,15 @@ describe("staff.service", () => {
       expect(rows).toHaveLength(1);
       expect(rows[0].id).toBe("staff-1");
     });
+
+    it("returns an empty array when the label filter matches no staff", async () => {
+      await insertUser("staff-1");
+      await areasService.create("staff-1", { label: "Graph Theory" });
+
+      const rows = await service.list({ label: "underwater basket weaving" });
+
+      expect(rows).toEqual([]);
+    });
   });
 
   describe("getStaffProfile", () => {

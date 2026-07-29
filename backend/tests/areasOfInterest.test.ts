@@ -45,6 +45,23 @@ describe("areasOfInterest.service", () => {
     it("rejects with a over-length label", async () => {
       await expect(service.create("staff-1", { label: "a".repeat(101) })).rejects.toThrow(ValidationError);
     })
+
+    it("succeeds with a label at exactly the 100-character upper boundary", async () => {
+      const row = await service.create("staff-1", { label: "a".repeat(100) });
+      expect(row.label).toHaveLength(100);
+    })
+
+    it("accepts a whitespace-only label as-is", async () => {
+      const row = await service.create("staff-1", { label: " " });
+      expect(row.label).toBe(" ");
+    })
+
+    it("allows a duplicate label for the same staff member", async () => {
+      await service.create("staff-1", { label: "Graph Theory" });
+      const second = await service.create("staff-1", { label: "Graph Theory" });
+      expect(second.label).toBe("Graph Theory");
+      expect(await service.list("staff-1")).toHaveLength(2);
+    })
   })
 
   describe("update", () => {
@@ -64,6 +81,11 @@ describe("areasOfInterest.service", () => {
     it("throws ValidationError on an invalid label", async () => {
       const row = await service.create("staff-1", { label: "Graph Theory" })
       await expect(service.update("staff-1", row.id, { label: "" })).rejects.toThrow(ValidationError);
+    })
+
+    it("throws ValidationError on an over-length label", async () => {
+      const row = await service.create("staff-1", { label: "Graph Theory" })
+      await expect(service.update("staff-1", row.id, { label: "a".repeat(101) })).rejects.toThrow(ValidationError);
     })
 
     it("throws NotFoundError for an unknown id", async () => {
