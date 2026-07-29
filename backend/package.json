@@ -4,6 +4,7 @@
   "scripts": {
     "test": "bun test",
     "dev": "bun run --watch src/index.ts",
+    "docs": "typedoc",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -21,7 +22,8 @@
   "devDependencies": {
     "@types/bun": "^1.3.14",
     "bun-types": "latest",
-    "drizzle-kit": "^1.0.0-rc.4"
+    "drizzle-kit": "^1.0.0-rc.4",
+    "typedoc": "^0.28.15"
   },
   "module": "src/index.js",
   "overrides": {
