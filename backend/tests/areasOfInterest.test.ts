@@ -2,21 +2,10 @@ import { beforeEach, describe, expect, it } from "bun:test";
 import { dbHolder } from "./db.mock";
 import * as schema from "../src/db/schema";
 import { createTestDb } from "./setup";
+import { insertUser } from "./helpers";
 import * as service from "../src/services/areasOfInterest.service";
 import { db } from "@/db";
 import { ForbiddenError, NotFoundError, ValidationError } from "@/lib/errors";
-
-async function insertUser(id: string, role: "staff" | "student" = "staff") {
-  await db.insert(schema.user).values({
-    id,
-    name: id,
-    email: `${id}@example.com`,
-    emailVerified: false,
-    role,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
-}
 
 beforeEach(async () => {
   dbHolder.current = createTestDb();
@@ -82,15 +71,67 @@ describe("areasOfInterest.service", () => {
     })
   })
 
-  describe.todo("remove", () => {
-    it("deletes an untagged interest", async () => {})
+  describe("remove", () => {
+    it("deletes an untagged interest", async () => {
+      const area = await service.create("staff-1", { label: "Graph Theory" });
 
-    it("returns a 'tagged' rejection and deletes nothing when tagged and confirm is omitted", async () => {})
+      const result = await service.remove("staff-1", area.id);
 
-    it("deletes join rows and the interest when confirm is true, idea itself survives untagged", async () => {})
+      expect(result).toEqual({ ok: true });
+      expect(await service.list("staff-1")).toEqual([]);
+    });
 
-    it("throws ForbiddenError for a non-owner", async () => {})
+    it("returns a 'tagged' rejection and deletes nothing when tagged and confirm is omitted", async () => {
+      const area = await service.create("staff-1", { label: "Graph Theory" });
+      const [idea] = await db
+        .insert(schema.projectIdea)
+        .values({ staffId: "staff-1", title: "Idea", description: "Description" })
+        .returning();
+      await db
+        .insert(schema.projectIdeaInterest)
+        .values({ projectIdeaId: idea.id, areaOfInterestId: area.id });
 
-    it("throws NotFoundError for an unknown id", async () => {})
+      const result = await service.remove("staff-1", area.id);
+
+      expect(result).toEqual({
+        ok: false,
+        reason: "tagged",
+        taggedIdeas: [{ id: idea.id, title: idea.title }],
+      });
+      expect(await service.list("staff-1")).toHaveLength(1);
+    });
+
+    it("deletes join rows and the interest when confirm is true, idea itself survives untagged", async () => {
+      const area = await service.create("staff-1", { label: "Graph Theory" });
+      const [idea] = await db
+        .insert(schema.projectIdea)
+        .values({ staffId: "staff-1", title: "Idea", description: "Description" })
+        .returning();
+      await db
+        .insert(schema.projectIdeaInterest)
+        .values({ projectIdeaId: idea.id, areaOfInterestId: area.id });
+
+      const result = await service.remove("staff-1", area.id, { confirm: true });
+
+      expect(result).toEqual({ ok: true });
+      expect(await service.list("staff-1")).toEqual([]);
+
+      const survivingIdea = await db.query.projectIdea.findFirst({ where: { id: idea.id } });
+      expect(survivingIdea).toBeDefined();
+
+      const joins = await db.query.projectIdeaInterest.findMany({
+        where: { projectIdeaId: idea.id },
+      });
+      expect(joins).toHaveLength(0);
+    });
+
+    it("throws ForbiddenError for a non-owner", async () => {
+      const area = await service.create("staff-1", { label: "Graph Theory" });
+      await expect(service.remove("staff-2", area.id)).rejects.toThrow(ForbiddenError);
+    });
+
+    it("throws NotFoundError for an unknown id", async () => {
+      await expect(service.remove("staff-1", "does-not-exist")).rejects.toThrow(NotFoundError);
+    });
   })
 })
