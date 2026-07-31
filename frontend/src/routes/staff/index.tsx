@@ -15,6 +15,7 @@ function StaffList() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["staff", label],
+    retry: 1,
     queryFn: async () => {
       const { data, error } = await api.staff.get({
         query: { label: label || undefined },
@@ -37,7 +38,7 @@ function StaffList() {
         {isLoading && <Spinner className="size-8" />}
         {error && (
           <p className="text-red-500">
-            Failed to load staff profiles: {error.message}
+            Failed to load staff profiles, Please sign in.
           </p>
         )}
         {data?.length === 0 && (
